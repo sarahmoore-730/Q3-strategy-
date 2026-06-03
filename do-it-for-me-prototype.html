@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Do It For Me — Caregiver Invite Prototype (A/C/D)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0a1628;
+    color: #fff;
+    min-height: 100vh;
+    padding: 24px 16px;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 15px;
+    color: #8ba3c1;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .subtitle {
+    text-align: center;
+    font-size: 13px;
+    color: #4a6580;
+    margin-bottom: 32px;
+  }
+
+  .options-row {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .option-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 320px;
+  }
+
+  .option-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #3dbfb8;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+
+  .option-desc {
+    font-size: 12px;
+    color: #4a6580;
+    text-align: center;
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+
+  /* Phone shell */
+  .phone {
+    width: 320px;
+    background: #0d1f35;
+    border-radius: 36px;
+    border: 2px solid #1e3a5a;
+    overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+  }
+
+  .phone-top {
+    background: #0d1f35;
+    padding: 14px 20px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #1a3050;
+  }
+
+  .phone-top-title {
+    font-size: 13px;
+    color: #c8a96e;
+    font-style: italic;
+    font-weight: 600;
+  }
+
+  .phone-top-icons {
+    display: flex;
+    gap: 12px;
+    color: #4a6580;
+    font-size: 16px;
+  }
+
+  .chat-area {
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-height: 520px;
+  }
+
+  /* Agent bubble */
+  .agent-row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .agent-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #c8a96e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .agent-bubble-wrap {
+    flex: 1;
+  }
+
+  .agent-name {
+    font-size: 10px;
+    color: #c8a96e;
+    font-style: italic;
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+
+  .agent-bubble {
+    background: #152a45;
+    border-radius: 4px 14px 14px 14px;
+    padding: 10px 13px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #d4e4f7;
+  }
+
+  /* User bubble */
+  .user-bubble {
+    background: #1e3d6b;
+    border-radius: 14px 4px 14px 14px;
+    padding: 10px 13px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #d4e4f7;
+    align-self: flex-end;
+    max-width: 80%;
+  }
+
+  /* --- OPTION A: Pure conversational --- */
+  .email-prompt {
+    background: #152a45;
+    border-radius: 4px 14px 14px 14px;
+    padding: 10px 13px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #d4e4f7;
+  }
+
+  /* --- OPTION B: Inline form card --- */
+  .action-card {
+    background: #0f2540;
+    border: 1px solid #2a4a6e;
+    border-radius: 14px;
+    padding: 14px;
+    margin-top: 4px;
+  }
+
+  .action-card-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #8ba3c1;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .fake-input {
+    background: #1a3050;
+    border: 1px solid #2a4a6e;
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-size: 13px;
+    color: #4a7aaa;
+    margin-bottom: 10px;
+    width: 100%;
+  }
+
+  .fake-input.filled {
+    color: #d4e4f7;
+    border-color: #3dbfb8;
+  }
+
+  .btn-primary {
+    background: #3dbfb8;
+    color: #0a1628;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  /* --- OPTION C: Confirmation step --- */
+  .confirm-card {
+    background: #0f2540;
+    border: 1px solid #3dbfb8;
+    border-radius: 14px;
+    padding: 14px;
+    margin-top: 4px;
+  }
+
+  .confirm-email {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    text-align: center;
+    margin: 8px 0 14px;
+  }
+
+  .confirm-subtext {
+    font-size: 12px;
+    color: #6a8aaa;
+    text-align: center;
+    margin-bottom: 14px;
+    line-height: 1.4;
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn-ghost {
+    flex: 1;
+    background: transparent;
+    border: 1px solid #2a4a6e;
+    color: #6a8aaa;
+    border-radius: 8px;
+    padding: 9px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  .btn-confirm {
+    flex: 2;
+    background: #3dbfb8;
+    color: #0a1628;
+    border: none;
+    border-radius: 8px;
+    padding: 9px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  /* Success state */
+  .success-bubble {
+    background: #0e2e20;
+    border: 1px solid #1a5c38;
+    border-radius: 4px 14px 14px 14px;
+    padding: 10px 13px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #4ecf8a;
+  }
+
+  .success-icon {
+    font-size: 16px;
+    margin-right: 4px;
+  }
+
+  /* Reply bar */
+  .reply-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border-top: 1px solid #1a3050;
+    background: #0d1f35;
+  }
+
+  .reply-input {
+    flex: 1;
+    background: #152a45;
+    border: 1px solid #1e3a5a;
+    border-radius: 20px;
+    padding: 8px 14px;
+    font-size: 13px;
+    color: #4a6580;
+  }
+
+  .reply-btn {
+    width: 32px;
+    height: 32px;
+    background: #2a5aaa;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 14px;
+  }
+
+  .disclaimer {
+    text-align: center;
+    font-size: 10px;
+    color: #2a4a6e;
+    padding: 6px 12px 12px;
+  }
+
+  /* State toggle controls */
+  .state-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 14px;
+    justify-content: center;
+  }
+
+  .state-tab {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid #2a4a6e;
+    color: #4a6580;
+    cursor: pointer;
+    background: transparent;
+  }
+
+  .state-tab.active {
+    background: #3dbfb8;
+    color: #0a1628;
+    border-color: #3dbfb8;
+    font-weight: 700;
+  }
+
+  /* Show/hide states */
+  .state { display: none; }
+  .state.visible { display: flex; flex-direction: column; gap: 14px; }
+
+  /* Half-sheet */
+  .phone-shell {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0 0 34px 34px;
+  }
+
+  .half-sheet {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #f5ede0;
+    border-radius: 20px 20px 0 0;
+    padding: 20px 20px 28px;
+    transform: translateY(100%);
+    transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+    z-index: 10;
+  }
+
+  .half-sheet.open {
+    transform: translateY(0);
+  }
+
+  .half-sheet-handle {
+    width: 36px;
+    height: 4px;
+    background: #c8b89a;
+    border-radius: 2px;
+    margin: 0 auto 18px;
+  }
+
+  .half-sheet-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0d1f35;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+
+  .half-sheet-sub {
+    font-size: 13px;
+    color: #6a7a8a;
+    text-align: center;
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+
+  .half-sheet-input {
+    width: 100%;
+    background: #e8ddd0;
+    border: 1.5px solid #c8b89a;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 14px;
+    color: #0d1f35;
+    margin-bottom: 12px;
+    outline: none;
+  }
+
+  .half-sheet-input.has-value {
+    border-color: #3dbfb8;
+    background: #fff;
+  }
+
+  .half-sheet-btn {
+    width: 100%;
+    background: #0d1f35;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 13px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 10px;
+  }
+
+  .half-sheet-cancel {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: #8a9aaa;
+    font-size: 13px;
+    cursor: pointer;
+    padding: 4px;
+  }
+
+  /* Half-sheet success */
+  .half-sheet-success {
+    text-align: center;
+    padding: 10px 0 4px;
+  }
+
+  .hs-check {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 2px solid #3dbfb8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 14px;
+    font-size: 22px;
+    color: #3dbfb8;
+  }
+
+  .hs-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #0d1f35;
+    margin-bottom: 8px;
+  }
+
+  .hs-body {
+    font-size: 13px;
+    color: #6a7a8a;
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+
+  .hs-ok {
+    width: 100%;
+    background: #3dbfb8;
+    color: #0a1628;
+    border: none;
+    border-radius: 10px;
+    padding: 13px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<h1>Do It For Me — Add a Caregiver</h1>
+<p class="subtitle">Prototype options for completing the invite inside chat</p>
+
+<div class="options-row">
+
+  <!-- ===================== OPTION A ===================== -->
+  <div class="option-col">
+    <div class="option-label">Option A</div>
+    <p class="option-desc">Conversational ask — agent requests email via chat, user types it, agent confirms and sends.</p>
+
+    <div class="state-tabs">
+      <button class="state-tab active" onclick="setStateA('ask')">Ask</button>
+      <button class="state-tab" onclick="setStateA('sent')">Sent</button>
+    </div>
+
+    <div class="phone">
+      <div class="phone-top">
+        <div class="phone-top-title">Hatch AI</div>
+        <div class="phone-top-icons">⊕ ⊙ ✕</div>
+      </div>
+
+      <div class="chat-area">
+        <!-- Original exchange -->
+        <div class="user-bubble">How do I add another caregiver?</div>
+
+        <!-- State: ask -->
+        <div id="a-ask" class="state visible">
+          <div class="agent-row">
+            <div class="agent-avatar">🐣</div>
+            <div class="agent-bubble-wrap">
+              <div class="agent-name">Hatch AI</div>
+              <div class="agent-bubble">
+                I can do that for you right now! Just share the email address of the person you'd like to add as a caregiver.
+              </div>
+            </div>
+          </div>
+          <div class="user-bubble">sarah@gmail.com</div>
+          <div class="agent-row">
+            <div class="agent-avatar">🐣</div>
+            <div class="agent-bubble-wrap">
+              <div class="agent-name">Hatch AI</div>
+              <div class="success-bubble">
+                ✓ Done! An invite has been sent to <strong>sarah@gmail.com</strong>. Once they accept, they'll have full access to your Hatch in their own app.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- State: sent confirmation view -->
+        <div id="a-sent" class="state">
+          <div class="agent-row">
+            <div class="agent-avatar">🐣</div>
+            <div class="agent-bubble-wrap">
+              <div class="agent-name">Hatch AI</div>
+              <div class="success-bubble">
+                ✓ Done! An invite has been sent to <strong>sarah@gmail.com</strong>. Once they accept, they'll have full access to your Hatch in their own app.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reply-bar">
+        <div class="reply-input">Reply…</div>
+        <div class="reply-btn">↑</div>
+      </div>
+      <div class="disclaimer">AI can make mistakes — verify important information</div>
+    </div>
+  </div>
+
+  <!-- ===================== OPTION B ===================== -->
+  <div class="option-col">
+    <div class="option-label">Option B</div>
+    <p class="option-desc">Inline form card — agent embeds a mini email form in the chat bubble. One tap to send.</p>
+
+    <div class="state-tabs">
+      <button class="state-tab active" onclick="setStateB('form')">Form</button>
+      <button class="state-tab" onclick="setStateB('sent')">Sent</button>
+    </div>
+
+    <div class="phone">
+      <div class="phone-top">
+        <div class="phone-top-title">Hatch AI</div>
+        <div class="phone-top-icons">⊕ ⊙ ✕</div>
+      </div>
+
+      <div class="chat-area">
+        <div class="user-bubble">How do I add another caregiver?</div>
+
+        <!-- State: form -->
+        <div id="b-form" class="state visible">
+          <div class="agent-row">
+            <div class="agent-avatar">🐣</div>
+            <div class="agent-bubble-wrap">
+              <div class="agent-name">Hatch AI</div>
+              <div class="agent-bubble">
+                I can add them for you right now.
+                <div class="action-card" style="margin-top: 10px;">
+                  <div class="action-card-title">Add a caregiver</div>
+                  <div class="fake-input filled">partner@email.com</div>
+                  <button class="btn-primary">Send Invite →</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- State: sent -->
+        <div id="b-sent" class="state">
+          <div class="agent-row">
+            <div class="agent-avatar">🐣</div>
+            <div class="agent-bubble-wrap">
+              <div class="agent-name">Hatch AI</div>
+              <div class="agent-bubble">
+                I can add them for you right now.
+                <div class="action-card" style="margin-top: 10px;">
+                  <div class="action-card-title">Add a caregiver</div>
+                  <div class="fake-input filled">partner@email.com</div>
+                  <button class="btn-primary">Send Invite →</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="agent-row">
+            <div class="agent-avatar">🐣</div>
+            <div class="agent-bubble-wrap">
+              <div class="agent-name">Hatch AI</div>
+              <div class="success-bubble">
+                ✓ Invite sent to <strong>partner@email.com</strong>. They'll get an email — once accepted, they'll have access in their own Hatch app.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reply-bar">
+        <div class="reply-input">Reply…</div>
+        <div class="reply-btn">↑</div>
+      </div>
+      <div class="disclaimer">AI can make mistakes — verify important information</div>
+    </div>
+  </div>
+
+  <!-- ===================== OPTION C ===================== -->
+  <div class="option-col">
+    <div class="option-label">Option C</div>
+    <p class="option-desc">Conversational ask + confirmation card — agent collects email in chat, then shows a confirm/cancel card before acting.</p>
+
+    <div class="state-tabs">
+      <button class="state-tab active" onclick="setStateC('confirm')">Confirm</button>
+      <button class="state-tab" onclick="setStateC('sent')">Sent</button>
+    </div>
+
+    <div class="phone">
+      <div class="phone-top">
+        <div class="phone-top-title">Hatch AI</div>
+        <div class="phone-top-icons">⊕ ⊙ ✕</div>
+      </div>
+
+      <div class="chat-area">
+        <div class="user-bubble">How do I add another caregiver?</div>
+
+        <!-- State: confirm -->
+        <div id="c-confirm" class="state visible">
+          <div class="agent-row">
+            <div class="agent-avatar">🐣</div>
+            <div class="agent-bubble-wrap">
+              <div class="agent-name">Hatch AI</div>
+              <div class="agent-bubble">
+                I can send the invite right from here. What's their email address?
+              </div>
+            </div>
+          </div>
+          <div class="user-bubble">sarah@gmail.com</div>
+          <div class="agent-row">
+            <div class="agent-avatar">🐣</div>
+            <div class="agent-bubble-wrap">
+              <div class="agent-name">Hatch AI</div>
+              <div class="agent-bubble">
+                Ready to send the invite?
+                <div class="confirm-card" style="margin-top:10px;">
+                  <div class="confirm-subtext">Caregiver invite to</div>
+                  <div class="confirm-email">sarah@gmail.com</div>
+                  <div class="confirm-subtext">They'll get an email. Once accepted, they'll have full access in their own app.</div>
+                  <div class="btn-row">
+                    <button class="btn-ghost">Cancel</button>
+                    <button class="btn-confirm">Send Invite</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- State: sent -->
+        <div id="c-sent" class="state">
+          <div class="agent-row">
+            <div class="agent-avatar">🐣</div>
+            <div class="agent-bubble-wrap">
+              <div class="agent-name">Hatch AI</div>
+              <div class="agent-bubble">
+                I can send the invite right from here. What's their email address?
+              </div>
+            </div>
+          </div>
+          <div class="user-bubble">sarah@gmail.com</div>
+          <div class="agent-row">
+            <div class="agent-avatar">🐣</div>
+            <div class="agent-bubble-wrap">
+              <div class="agent-name">Hatch AI</div>
+              <div class="success-bubble">
+                ✓ Invite sent to <strong>sarah@gmail.com</strong>. Once they accept, they'll have full access to your Hatch in their own app.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reply-bar">
+        <div class="reply-input">Reply…</div>
+        <div class="reply-btn">↑</div>
+      </div>
+      <div class="disclaimer">AI can make mistakes — verify important information</div>
+    </div>
+  </div>
+
+  <!-- ===================== OPTION D ===================== -->
+  <div class="option-col">
+    <div class="option-label">Option D</div>
+    <p class="option-desc">Half-sheet takeover — agent responds in chat, a sheet slides up covering the chat input. Email field lives in the sheet. One entry point, no competing inputs.</p>
+
+    <div class="state-tabs">
+      <button class="state-tab active" onclick="setStateD('chat')">Chat</button>
+      <button class="state-tab" onclick="setStateD('sheet')">Sheet open</button>
+      <button class="state-tab" onclick="setStateD('sent')">Sent</button>
+    </div>
+
+    <div class="phone">
+      <div class="phone-top">
+        <div class="phone-top-title">Hatch AI</div>
+        <div class="phone-top-icons">⊕ ⊙ ✕</div>
+      </div>
+
+      <div class="phone-shell">
+        <div class="chat-area" style="min-height: 480px;">
+          <div class="user-bubble">How do I add another caregiver?</div>
+          <div class="agent-row">
+            <div class="agent-avatar">🐣</div>
+            <div class="agent-bubble-wrap">
+              <div class="agent-name">Hatch AI</div>
+              <div class="agent-bubble" id="d-bubble">
+                I can send the invite for you right now.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="reply-bar" id="d-reply-bar">
+          <div class="reply-input">Reply…</div>
+          <div class="reply-btn">↑</div>
+        </div>
+
+        <!-- Half sheet -->
+        <div class="half-sheet" id="d-sheet">
+          <div class="half-sheet-handle"></div>
+
+          <!-- Input state -->
+          <div id="d-sheet-input">
+            <div class="half-sheet-title">Add a Caregiver</div>
+            <div class="half-sheet-sub">Share the love (and control of Hatch Baby).<br>We'll send them an email invitation.</div>
+            <input class="half-sheet-input has-value" id="d-email-field" type="email" value="partner@email.com" placeholder="Email Address" />
+            <button class="half-sheet-btn" onclick="setStateD('sent')">Invite</button>
+            <button class="half-sheet-cancel" onclick="setStateD('chat')">Cancel</button>
+          </div>
+
+          <!-- Success state -->
+          <div id="d-sheet-success" style="display:none;">
+            <div class="half-sheet-success">
+              <div class="hs-check">✓</div>
+              <div class="hs-title">Your invitation has been sent.</div>
+              <div class="hs-body">Once <strong>partner@email.com</strong> accepts, they'll have full access to your Hatch in their own app.</div>
+              <button class="hs-ok" onclick="setStateD('chat')">OK</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="disclaimer">AI can make mistakes — verify important information</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Key tradeoffs -->
+<div style="max-width: 980px; margin: 40px auto 0; padding: 0 16px;">
+  <div style="border-top: 1px solid #1a3050; padding-top: 24px; display: flex; gap: 20px; flex-wrap: wrap;">
+
+    <div style="flex: 1; min-width: 240px;">
+      <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #3dbfb8; margin-bottom: 8px; font-weight: 700;">Option A — Conversational</div>
+      <div style="font-size: 12px; color: #6a8aaa; line-height: 1.6;">
+        ✓ Feels natural, no new UI patterns<br>
+        ✓ Works with existing chat framework today<br>
+        ✗ Easy to mistype email — no validation step<br>
+        ✗ Action fires immediately, no undo
+      </div>
+    </div>
+
+    <div style="flex: 1; min-width: 240px;">
+      <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #3dbfb8; margin-bottom: 8px; font-weight: 700;">Option B — Inline Form</div>
+      <div style="font-size: 12px; color: #6a8aaa; line-height: 1.6;">
+        ✓ Clean, purpose-built UI for the task<br>
+        ✓ Easiest to extend to other Do It For Me flows<br>
+        ✗ Requires new interactive component in chat<br>
+        ✗ More engineering lift
+      </div>
+    </div>
+
+    <div style="flex: 1; min-width: 240px;">
+      <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #3dbfb8; margin-bottom: 8px; font-weight: 700;">Option C — Confirm Step</div>
+      <div style="font-size: 12px; color: #6a8aaa; line-height: 1.6;">
+        ✓ Reduces accidental sends / wrong email<br>
+        ✓ Confirmation card reusable across flows<br>
+        ✗ One extra tap vs. Option A<br>
+        ✗ Slightly heavier than needed for a low-stakes action
+      </div>
+    </div>
+
+    <div style="flex: 1; min-width: 240px;">
+      <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #3dbfb8; margin-bottom: 8px; font-weight: 700;">Option D — Half Sheet</div>
+      <div style="font-size: 12px; color: #6a8aaa; line-height: 1.6;">
+        ✓ No competing text inputs — sheet replaces chat bar<br>
+        ✓ Matches existing Hatch UI pattern (emergency sheet)<br>
+        ✓ Dedicated space feels intentional, not bolted-on<br>
+        ✗ Bigger engineering lift — new sheet component<br>
+        ✗ Modal feel may feel heavy for a simple invite
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function setStateA(state) {
+  document.getElementById('a-ask').className = 'state' + (state === 'ask' ? ' visible' : '');
+  document.getElementById('a-sent').className = 'state' + (state === 'sent' ? ' visible' : '');
+  document.querySelectorAll('.option-col')[0].querySelectorAll('.state-tab').forEach((t, i) => {
+    t.className = 'state-tab' + (i === (state === 'ask' ? 0 : 1) ? ' active' : '');
+  });
+}
+function setStateB(state) {
+  document.getElementById('b-form').className = 'state' + (state === 'form' ? ' visible' : '');
+  document.getElementById('b-sent').className = 'state' + (state === 'sent' ? ' visible' : '');
+  document.querySelectorAll('.option-col')[1].querySelectorAll('.state-tab').forEach((t, i) => {
+    t.className = 'state-tab' + (i === (state === 'form' ? 0 : 1) ? ' active' : '');
+  });
+}
+function setStateC(state) {
+  document.getElementById('c-confirm').className = 'state' + (state === 'confirm' ? ' visible' : '');
+  document.getElementById('c-sent').className = 'state' + (state === 'sent' ? ' visible' : '');
+  document.querySelectorAll('.option-col')[2].querySelectorAll('.state-tab').forEach((t, i) => {
+    t.className = 'state-tab' + (i === (state === 'confirm' ? 0 : 1) ? ' active' : '');
+  });
+}
+
+function setStateD(state) {
+  const sheet = document.getElementById('d-sheet');
+  const inputView = document.getElementById('d-sheet-input');
+  const successView = document.getElementById('d-sheet-success');
+  const tabs = document.querySelectorAll('.option-col')[3].querySelectorAll('.state-tab');
+
+  if (state === 'chat') {
+    sheet.classList.remove('open');
+    inputView.style.display = '';
+    successView.style.display = 'none';
+    tabs.forEach((t, i) => t.className = 'state-tab' + (i === 0 ? ' active' : ''));
+  } else if (state === 'sheet') {
+    sheet.classList.add('open');
+    inputView.style.display = '';
+    successView.style.display = 'none';
+    tabs.forEach((t, i) => t.className = 'state-tab' + (i === 1 ? ' active' : ''));
+  } else if (state === 'sent') {
+    sheet.classList.add('open');
+    inputView.style.display = 'none';
+    successView.style.display = '';
+    tabs.forEach((t, i) => t.className = 'state-tab' + (i === 2 ? ' active' : ''));
+  }
+}
+</script>
+
+</body>
+</html>
