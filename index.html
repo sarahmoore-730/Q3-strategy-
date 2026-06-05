@@ -478,6 +478,29 @@
     cursor: pointer;
   }
 
+  /* ── Activity record block ── */
+  .record-block {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #0f2540;
+    border: 1px solid #1e3a5a;
+    border-radius: 10px;
+    padding: 10px 13px;
+    font-size: 12px;
+    color: #6a8aaa;
+  }
+
+  .record-icon {
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .record-text strong {
+    color: #d4e4f7;
+    font-weight: 600;
+  }
+
   /* ── Archive section header ── */
   .archive-note {
     text-align: center;
@@ -510,6 +533,7 @@
         <button class="state-tab" onclick="setStateD('chat')">Chat</button>
         <button class="state-tab active" onclick="setStateD('sheet')">Sheet open</button>
         <button class="state-tab" onclick="setStateD('sent')">Sent</button>
+        <button class="state-tab" onclick="setStateD('done')">Record</button>
       </div>
 
       <div class="phone">
@@ -521,6 +545,10 @@
         <div class="phone-shell">
           <div class="chat-area" style="min-height: 480px;">
             <div class="user-bubble">add a caregiver</div>
+            <div class="record-block" id="d-record" style="display:none;">
+              <div class="record-icon">✓</div>
+              <div class="record-text">Caregiver invite sent to <strong>partner@email.com</strong></div>
+            </div>
           </div>
 
           <div class="reply-bar" id="d-reply-bar">
@@ -545,7 +573,7 @@
                 <div class="hs-check">✓</div>
                 <div class="hs-title">Your invitation has been sent.</div>
                 <div class="hs-body">Once <strong>partner@email.com</strong> accepts, they'll have full access to your Hatch in their own app.</div>
-                <button class="hs-ok" onclick="setStateD('chat')">OK</button>
+                <button class="hs-ok" onclick="setStateD('done')">OK</button>
               </div>
             </div>
           </div>
@@ -797,22 +825,31 @@ function setStateD(state) {
   const sheet = document.getElementById('d-sheet');
   const inputView = document.getElementById('d-sheet-input');
   const successView = document.getElementById('d-sheet-success');
+  const record = document.getElementById('d-record');
   const tabs = document.querySelectorAll('#page-selected .state-tab');
 
   if (state === 'chat') {
     sheet.classList.remove('open');
     inputView.style.display = '';
     successView.style.display = 'none';
+    record.style.display = 'none';
     tabs.forEach((t, i) => t.className = 'state-tab' + (i === 0 ? ' active' : ''));
   } else if (state === 'sheet') {
     sheet.classList.add('open');
     inputView.style.display = '';
     successView.style.display = 'none';
+    record.style.display = 'none';
     tabs.forEach((t, i) => t.className = 'state-tab' + (i === 1 ? ' active' : ''));
   } else if (state === 'sent') {
     sheet.classList.add('open');
     inputView.style.display = 'none';
     successView.style.display = '';
+    tabs.forEach((t, i) => t.className = 'state-tab' + (i === 2 ? ' active' : ''));
+  } else if (state === 'done') {
+    sheet.classList.remove('open');
+    inputView.style.display = '';
+    successView.style.display = 'none';
+    record.style.display = 'flex';
     tabs.forEach((t, i) => t.className = 'state-tab' + (i === 2 ? ' active' : ''));
   }
 }
