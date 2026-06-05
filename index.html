@@ -498,6 +498,120 @@
     font-weight: 600;
   }
 
+  /* ── Two-col hero layout ── */
+  .hero-row {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    max-width: 820px;
+    margin: 0 auto;
+  }
+
+  /* ── Next steps panel ── */
+  .next-steps-panel {
+    flex: 1;
+    min-width: 260px;
+    max-width: 360px;
+    padding-top: 8px;
+  }
+
+  .next-steps-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #3dbfb8;
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+
+  .next-steps-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .next-steps-list li {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 13px;
+    color: #8ba3c1;
+    line-height: 1.5;
+  }
+
+  .next-steps-list li::before {
+    content: '→';
+    color: #3dbfb8;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .next-steps-empty {
+    font-size: 13px;
+    color: #2a4a6e;
+    font-style: italic;
+    line-height: 1.6;
+  }
+
+  /* ── Archive collapsible ── */
+  .archive-toggle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    max-width: 820px;
+    margin: 48px auto 0;
+    padding: 0;
+    background: none;
+    border: none;
+    width: 100%;
+  }
+
+  .archive-toggle-line {
+    flex: 1;
+    height: 1px;
+    background: #1a3050;
+  }
+
+  .archive-toggle-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #2a4a6e;
+    font-weight: 600;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s;
+  }
+
+  .archive-toggle:hover .archive-toggle-label {
+    color: #4a6a90;
+  }
+
+  .archive-arrow {
+    font-size: 10px;
+    transition: transform 0.25s;
+    display: inline-block;
+  }
+
+  .archive-arrow.open {
+    transform: rotate(180deg);
+  }
+
+  .archive-body {
+    display: none;
+    padding-top: 28px;
+  }
+
+  .archive-body.open {
+    display: block;
+  }
+
   /* ── Archive section header ── */
   .archive-note {
     text-align: center;
@@ -515,7 +629,7 @@
 
 <!-- ===================== SELECTED: OPTION D ===================== -->
 <div id="page-selected" class="page-section">
-  <div class="options-row">
+  <div class="hero-row">
     <div class="option-col">
       <div class="option-label">Half-Sheet Takeover</div>
       <p class="option-desc">Agent responds in chat, a sheet slides up covering the chat input. Email field lives in the sheet — one entry point, no competing inputs.</p>
@@ -573,17 +687,30 @@
         <div class="disclaimer">AI can make mistakes — verify important information</div>
       </div>
     </div>
+    </div>
+
+    <!-- Next Steps panel -->
+    <div class="next-steps-panel">
+      <div class="next-steps-label">Next Steps</div>
+      <ul class="next-steps-list">
+        <p class="next-steps-empty">Meeting notes coming soon…</p>
+      </ul>
+    </div>
+
   </div>
 </div>
 
 <!-- ===================== ARCHIVE ===================== -->
-<div class="archive-divider">
-  <div class="archive-divider-line"></div>
-  <div class="archive-divider-label">Archived options</div>
-  <div class="archive-divider-line"></div>
-</div>
+<button class="archive-toggle" onclick="toggleArchive()">
+  <div class="archive-toggle-line"></div>
+  <div class="archive-toggle-label">
+    Archived options
+    <span class="archive-arrow" id="archive-arrow">▼</span>
+  </div>
+  <div class="archive-toggle-line"></div>
+</button>
 
-<div id="page-archive" class="page-section">
+<div class="archive-body" id="archive-body">
   <p class="archive-note">These options were considered and set aside in favor of the half-sheet direction.</p>
 
   <div class="options-row">
@@ -787,10 +914,18 @@
 
 <script>
 
+function toggleArchive() {
+  const body = document.getElementById('archive-body');
+  const arrow = document.getElementById('archive-arrow');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  arrow.classList.toggle('open', !isOpen);
+}
+
 function setStateA(state) {
   document.getElementById('a-ask').className = 'state' + (state === 'ask' ? ' visible' : '');
   document.getElementById('a-sent').className = 'state' + (state === 'sent' ? ' visible' : '');
-  document.querySelectorAll('#page-archive .option-col')[0].querySelectorAll('.state-tab').forEach((t, i) => {
+  document.querySelectorAll('#archive-body .option-col')[0].querySelectorAll('.state-tab').forEach((t, i) => {
     t.className = 'state-tab' + (i === (state === 'ask' ? 0 : 1) ? ' active' : '');
   });
 }
@@ -798,7 +933,7 @@ function setStateA(state) {
 function setStateB(state) {
   document.getElementById('b-form').className = 'state' + (state === 'form' ? ' visible' : '');
   document.getElementById('b-sent').className = 'state' + (state === 'sent' ? ' visible' : '');
-  document.querySelectorAll('#page-archive .option-col')[1].querySelectorAll('.state-tab').forEach((t, i) => {
+  document.querySelectorAll('#archive-body .option-col')[1].querySelectorAll('.state-tab').forEach((t, i) => {
     t.className = 'state-tab' + (i === (state === 'form' ? 0 : 1) ? ' active' : '');
   });
 }
@@ -806,7 +941,7 @@ function setStateB(state) {
 function setStateC(state) {
   document.getElementById('c-confirm').className = 'state' + (state === 'confirm' ? ' visible' : '');
   document.getElementById('c-sent').className = 'state' + (state === 'sent' ? ' visible' : '');
-  document.querySelectorAll('#page-archive .option-col')[2].querySelectorAll('.state-tab').forEach((t, i) => {
+  document.querySelectorAll('#archive-body .option-col')[2].querySelectorAll('.state-tab').forEach((t, i) => {
     t.className = 'state-tab' + (i === (state === 'confirm' ? 0 : 1) ? ' active' : '');
   });
 }
