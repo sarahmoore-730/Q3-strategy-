@@ -501,20 +501,19 @@
   /* ── Two-col hero layout ── */
   .hero-row {
     display: flex;
-    gap: 40px;
+    gap: 48px;
     justify-content: center;
     align-items: flex-start;
-    flex-wrap: wrap;
-    max-width: 820px;
+    flex-wrap: nowrap;
+    max-width: 900px;
     margin: 0 auto;
   }
 
   /* ── Next steps panel ── */
   .next-steps-panel {
     flex: 1;
-    min-width: 260px;
-    max-width: 360px;
-    padding-top: 8px;
+    min-width: 280px;
+    padding-top: 56px;
   }
 
   .next-steps-label {
@@ -687,18 +686,27 @@
         <div class="disclaimer">AI can make mistakes — verify important information</div>
       </div>
     </div>
-    </div>
 
-    <!-- Next Steps panel -->
+    <!-- Right panel: Notes + Next Steps -->
     <div class="next-steps-panel">
+
+      <div class="next-steps-label">Decisions</div>
+      <ul class="next-steps-list" style="margin-bottom: 32px;">
+        <li>LLM classifier (not hardcoded) will categorize "add caregiver" requests through the customer support prompt</li>
+        <li>New chat disposition: <strong>"UI caregiver"</strong> — half-sheet triggers immediately on detection, no initial chat message</li>
+        <li>Post-action summary message records completion in chat history — new message type, enables future chat-triggered actions</li>
+        <li>Raul to implement classifier changes</li>
+      </ul>
+
       <div class="next-steps-label">Next Steps</div>
       <ul class="next-steps-list">
         <li><strong>Sarah</strong> — Compile caregiver request patterns by end of week</li>
         <li><strong>Sarah + Raul</strong> — Test classifier placement early next week</li>
         <li><strong>Anoushka</strong> — Clean up half-sheet design components for implementation</li>
-        <li><strong>Sako</strong> — Development estimate 1.5 days (1 day implementation, 0.5 day testing/edge cases)</li>
-        <li><strong>Team</strong> — Regroup Monday on classifier optimization changes</li>
+        <li><strong>Sako</strong> — 1.5 day dev estimate (1 day implementation, 0.5 day testing/edge cases)</li>
+        <li><strong>Team</strong> — Regroup Monday on classifier optimization</li>
       </ul>
+
     </div>
 
   </div>
