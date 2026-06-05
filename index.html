@@ -690,12 +690,12 @@
     <!-- Right panel: Notes + Next Steps -->
     <div class="next-steps-panel">
 
-      <div class="next-steps-label">Decisions</div>
+      <div class="next-steps-label">Meeting Notes</div>
       <ul class="next-steps-list" style="margin-bottom: 32px;">
-        <li>LLM classifier (not hardcoded) will categorize "add caregiver" requests through the customer support prompt — Raul to implement</li>
-        <li>New chat disposition: <strong>"UI caregiver"</strong> — half-sheet triggers immediately on detection, no initial chat message shown</li>
-        <li>Message flow: user asks → half-sheet appears instantly → user completes or dismisses → summary message appears in chat history</li>
-        <li>New message type for action summaries — enables future chat-triggered actions, backwards compatible with existing system</li>
+        <li>LLM categorization selected over hardcoded question matching — will classify "add caregiver" requests through customer support prompt. Raul &amp; Sarah to implement classifier changes.</li>
+        <li>New chat disposition: <strong>"UI caregiver"</strong> — half-sheet triggers immediately on detection, no initial chat message shown, post-action summary records completion.</li>
+        <li>Message flow: (1) User asks "how do I add caregiver" → (2) Half-sheet appears instantly → (3) User completes/dismisses → (4) Summary message appears in chat history.</li>
+        <li>New message type for action summaries — enables future chat-triggered actions, backwards compatible with existing system.</li>
       </ul>
 
       <div class="next-steps-label">Next Steps</div>
