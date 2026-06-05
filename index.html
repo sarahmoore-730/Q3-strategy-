@@ -690,17 +690,23 @@
     <!-- Right panel: Notes + Next Steps -->
     <div class="next-steps-panel">
 
+      <div class="next-steps-label">Message Flow</div>
+      <ol class="next-steps-list" style="margin-bottom: 32px; list-style: none;">
+        <li><strong>1.</strong> User asks "how do I add caregiver"</li>
+        <li><strong>2.</strong> Half-sheet appears instantly</li>
+        <li><strong>3.</strong> User completes or dismisses action</li>
+        <li><strong>4.</strong> Summary message appears in chat history</li>
+      </ol>
+
       <div class="next-steps-label">Meeting Notes</div>
       <ul class="next-steps-list" style="margin-bottom: 32px;">
         <li>LLM categorization selected over hardcoded question matching — will classify "add caregiver" requests through customer support prompt. Raul &amp; Sarah to implement classifier changes.</li>
         <li>New chat disposition: <strong>"UI caregiver"</strong> — half-sheet triggers immediately on detection, no initial chat message shown, post-action summary records completion.</li>
-        <li>Message flow: (1) User asks "how do I add caregiver" → (2) Half-sheet appears instantly → (3) User completes/dismisses → (4) Summary message appears in chat history.</li>
         <li>New message type for action summaries — enables future chat-triggered actions, backwards compatible with existing system.</li>
       </ul>
 
       <div class="next-steps-label">Next Steps</div>
       <ul class="next-steps-list">
-        <li><strong>Sarah</strong> — Compile caregiver request patterns by end of week</li>
         <li><strong>Sarah + Raul</strong> — Test classifier placement early next week</li>
         <li><strong>Anoushka</strong> — Clean up half-sheet design components for implementation</li>
         <li><strong>Sako</strong> — 1.5 day dev estimate (1 day implementation, 0.5 day testing/edge cases)</li>
