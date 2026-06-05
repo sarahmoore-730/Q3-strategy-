@@ -31,33 +31,30 @@
     margin-bottom: 32px;
   }
 
-  /* ── Top-level page tabs ── */
-  .page-tabs {
+  .page-section { display: block; }
+
+  .archive-divider {
+    max-width: 980px;
+    margin: 48px auto 32px;
     display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin-bottom: 32px;
+    align-items: center;
+    gap: 16px;
   }
 
-  .page-tab {
-    font-size: 13px;
-    padding: 7px 20px;
-    border-radius: 20px;
-    border: 1px solid #2a4a6e;
-    color: #4a6580;
-    cursor: pointer;
-    background: transparent;
+  .archive-divider-line {
+    flex: 1;
+    height: 1px;
+    background: #1a3050;
   }
 
-  .page-tab.active {
-    background: #3dbfb8;
-    color: #0a1628;
-    border-color: #3dbfb8;
-    font-weight: 700;
+  .archive-divider-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #2a4a6e;
+    font-weight: 600;
+    white-space: nowrap;
   }
-
-  .page-section { display: none; }
-  .page-section.visible { display: block; }
 
   /* ── Layout ── */
   .options-row {
@@ -516,14 +513,8 @@
 <h1>Do It For Me — Add a Caregiver</h1>
 <p class="subtitle">Selected direction + archived options</p>
 
-<!-- Page-level tabs -->
-<div class="page-tabs">
-  <button class="page-tab active" onclick="showPage('selected')">Selected direction</button>
-  <button class="page-tab" onclick="showPage('archive')">Archive options</button>
-</div>
-
 <!-- ===================== SELECTED: OPTION D ===================== -->
-<div id="page-selected" class="page-section visible">
+<div id="page-selected" class="page-section">
   <div class="options-row">
     <div class="option-col">
       <div class="option-label">Half-Sheet Takeover</div>
@@ -586,6 +577,12 @@
 </div>
 
 <!-- ===================== ARCHIVE ===================== -->
+<div class="archive-divider">
+  <div class="archive-divider-line"></div>
+  <div class="archive-divider-label">Archived options</div>
+  <div class="archive-divider-line"></div>
+</div>
+
 <div id="page-archive" class="page-section">
   <p class="archive-note">These options were considered and set aside in favor of the half-sheet direction.</p>
 
@@ -789,13 +786,6 @@
 </div>
 
 <script>
-function showPage(page) {
-  document.getElementById('page-selected').className = 'page-section' + (page === 'selected' ? ' visible' : '');
-  document.getElementById('page-archive').className = 'page-section' + (page === 'archive' ? ' visible' : '');
-  document.querySelectorAll('.page-tab').forEach((t, i) => {
-    t.className = 'page-tab' + ((page === 'selected' && i === 0) || (page === 'archive' && i === 1) ? ' active' : '');
-  });
-}
 
 function setStateA(state) {
   document.getElementById('a-ask').className = 'state' + (state === 'ask' ? ' visible' : '');
