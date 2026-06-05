@@ -507,8 +507,8 @@
       <p class="option-desc">Agent responds in chat, a sheet slides up covering the chat input. Email field lives in the sheet — one entry point, no competing inputs.</p>
 
       <div class="state-tabs">
-        <button class="state-tab active" onclick="setStateD('chat')">Chat</button>
-        <button class="state-tab" onclick="setStateD('sheet')">Sheet open</button>
+        <button class="state-tab" onclick="setStateD('chat')">Chat</button>
+        <button class="state-tab active" onclick="setStateD('sheet')">Sheet open</button>
         <button class="state-tab" onclick="setStateD('sent')">Sent</button>
       </div>
 
@@ -521,13 +521,6 @@
         <div class="phone-shell">
           <div class="chat-area" style="min-height: 480px;">
             <div class="user-bubble">add a caregiver</div>
-            <div class="agent-row">
-              <div class="agent-avatar">🐣</div>
-              <div class="agent-bubble-wrap">
-                <div class="agent-name">Hatch AI</div>
-                <div class="agent-bubble">I can send the invite for you right now.</div>
-              </div>
-            </div>
           </div>
 
           <div class="reply-bar" id="d-reply-bar">
@@ -536,7 +529,7 @@
           </div>
 
           <!-- Half sheet -->
-          <div class="half-sheet" id="d-sheet">
+          <div class="half-sheet open" id="d-sheet">
             <div class="half-sheet-handle"></div>
 
             <div id="d-sheet-input">
