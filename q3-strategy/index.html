@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Baby Agent — Q3 Strategy</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+  <style>
+    /* Hatch design tokens — light mode */
+    :root {
+      --warm-white:   #FAF8F4;
+      --neutral-100:  #F4F1E9;
+      --morning:      #F1EBE1;
+      --magic-hour:   #CFBAA7;
+      --dusk:         #BA9D90;
+      --navy-100:     #BFCAD9;
+      --navy-500:     #2E5484;
+      --navy-600:     #274D7B;
+      --navy-700:     #1F4370;
+      --navy-800:     #193A63;
+      --navy-900:     #13294B;
+      --navy-1000:    #0A1A34;
+      --amber:        #FF972F;
+      --white:        #FFFFFF;
+
+      --bg-page:      var(--warm-white);
+      --bg-card:      var(--white);
+      --bg-surface:   var(--neutral-100);
+      --bg-tint:      var(--morning);
+
+      --text-primary:   var(--navy-1000);
+      --text-secondary: var(--navy-800);
+      --text-muted:     var(--navy-600);
+
+      --border-light:   var(--morning);
+      --border-mid:     var(--magic-hour);
+      --border-strong:  var(--dusk);
+
+      --accent:         var(--navy-500);
+      --accent-light:   var(--navy-100);
+
+      --funnel-1: #BFCAD9;
+      --funnel-1-text: #193A63;
+      --funnel-2: #2E5484;
+      --funnel-2-text: #FAF8F4;
+      --funnel-3: #13294B;
+      --funnel-3-text: #FAF8F4;
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-pill: 999px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-page:    var(--navy-1000);
+        --bg-card:    var(--navy-900);
+        --bg-surface: var(--navy-800);
+        --bg-tint:    var(--navy-700);
+
+        --text-primary:   var(--white);
+        --text-secondary: var(--navy-100);
+        --text-muted:     #7A90A8;
+
+        --border-light:  var(--navy-700);
+        --border-mid:    var(--navy-600);
+        --border-strong: var(--navy-500);
+
+        --accent:       var(--navy-100);
+        --accent-light: var(--navy-800);
+
+        --funnel-1: #193A63;
+        --funnel-1-text: #BFCAD9;
+        --funnel-2: #274D7B;
+        --funnel-2-text: #FAF8F4;
+        --funnel-3: #2E5484;
+        --funnel-3-text: #FFFFFF;
+      }
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'TT Commons Pro', 'TT Commons', system-ui, -apple-system, sans-serif;
+      background: var(--bg-page);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 2.5rem 1rem 5rem;
+      line-height: 1.4;
+    }
+
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    .page-header {
+      margin-bottom: 2rem;
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+
+    .page-title {
+      font-size: 28px;
+      font-weight: 400;
+      color: var(--text-primary);
+      line-height: 1.075;
+      margin-bottom: 10px;
+      letter-spacing: -0.5px;
+    }
+
+    .page-sub {
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* Toggle */
+    .toggle-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 1.75rem;
+      border-bottom: 1px solid var(--border-light);
+      padding-bottom: 1.25rem;
+    }
+
+    .toggle-btn {
+      font-size: 13px;
+      font-family: inherit;
+      font-weight: 400;
+      padding: 7px 16px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-mid);
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      text-decoration: none;
+    }
+
+    .toggle-btn:hover {
+      border-color: var(--border-strong);
+      color: var(--text-secondary);
+    }
+
+    .toggle-btn.active {
+      background: var(--navy-900);
+      color: var(--white);
+      border-color: var(--navy-900);
+      font-weight: 500;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .toggle-btn.active {
+        background: var(--white);
+        color: var(--navy-1000);
+        border-color: var(--white);
+      }
+    }
+
+    /* Views */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* Gap callout */
+    .gap-callout {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: var(--morning);
+      border: 1px solid var(--magic-hour);
+      border-radius: var(--radius-md);
+      padding: 0.875rem 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .gap-callout {
+        background: var(--navy-800);
+        border-color: var(--navy-600);
+      }
+    }
+
+    .gap-icon {
+      font-size: 17px;
+      color: var(--amber);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .gap-text {
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+
+    .gap-text strong {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .hint {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      text-align: center;
+      margin-bottom: 1rem;
+      letter-spacing: 0.01em;
+    }
+
+    /* Funnel SVG */
+    svg.funnel {
+      display: block;
+      width: 100%;
+      overflow: visible;
+      margin-bottom: 1.5rem;
+    }
+
+    .funnel-stage { cursor: pointer; }
+    .funnel-stage polygon { transition: opacity 0.15s; }
+    .funnel-stage:hover polygon { opacity: 0.75; }
+
+    /* Detail panels */
+    .detail-panel {
+      display: none;
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .detail-panel.open { display: block; }
+
+    .panel-header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .panel-title {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .panel-close {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid var(--border-light);
+      background: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 15px;
+      flex-shrink: 0;
+      transition: all 0.15s;
+    }
+
+    .panel-close:hover {
+      border-color: var(--border-mid);
+      color: var(--text-primary);
+    }
+
+    .panel-body { padding: 1.125rem 1.25rem; }
+
+    /* Metric cards */
+    .metrics-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 1.25rem;
+    }
+
+    .m-card {
+      flex: 1;
+      background: var(--bg-surface);
+      border-radius: var(--radius-md);
+      padding: 0.75rem 0.875rem;
+    }
+
+    .m-label {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      margin-bottom: 5px;
+    }
+
+    .m-val {
+      font-size: 24px;
+      font-weight: 400;
+      line-height: 1;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+      letter-spacing: -0.5px;
+    }
+
+    .m-val.goal { color: var(--navy-500); }
+
+    @media (prefers-color-scheme: dark) {
+      .m-val.goal { color: var(--navy-100); }
+    }
+
+    .m-desc {
+      font-size: 11px;
+      font-weight: 300;
+      color: var(--text-muted);
+    }
+
+    /* Progress bar */
+    .progress-bar-wrap { margin: 0 0 1.25rem; }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 300;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .progress-track {
+      height: 5px;
+      background: var(--bg-surface);
+      border-radius: var(--radius-pill);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: var(--radius-pill);
+      background: var(--navy-500);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .progress-fill { background: var(--navy-100); }
+    }
+
+    /* Section labels */
+    .section-label {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      margin: 1.125rem 0 0.625rem;
+    }
+
+    /* Lever cards */
+    .lever {
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1rem;
+      margin-bottom: 8px;
+    }
+
+    .lever-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .lever-desc {
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .lever-tags {
+      display: flex;
+      gap: 5px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .ltag {
+      font-size: 11px;
+      font-weight: 400;
+      padding: 3px 9px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-light);
+      color: var(--text-muted);
+      background: var(--bg-surface);
+    }
+
+    .ltag.navy {
+      background: var(--navy-100);
+      color: var(--navy-900);
+      border-color: var(--navy-100);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .ltag.navy {
+        background: var(--navy-800);
+        color: var(--navy-100);
+        border-color: var(--navy-700);
+      }
+    }
+
+    .ltag.amber {
+      background: #FFF3E5;
+      color: #7A3800;
+      border-color: #FFD4A0;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .ltag.amber {
+        background: #2A1800;
+        color: #FF972F;
+        border-color: #5A3000;
+      }
+    }
+
+    /* Signal box */
+    .signal-box {
+      background: var(--morning);
+      border: 1px solid var(--magic-hour);
+      border-radius: var(--radius-md);
+      padding: 0.625rem 0.875rem;
+      margin-top: 8px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .signal-box {
+        background: var(--navy-800);
+        border-color: var(--navy-600);
+      }
+    }
+
+    .signal-box p {
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .signal-box strong {
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    /* Proto slots */
+    .proto-slot {
+      border: 1px dashed var(--border-mid);
+      border-radius: var(--radius-md);
+      padding: 0.625rem 1rem;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .proto-slot:hover {
+      background: var(--bg-surface);
+      border-color: var(--border-strong);
+    }
+
+    .proto-icon { font-size: 15px; color: var(--text-muted); }
+
+    .proto-text {
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--text-secondary);
+    }
+
+    .proto-text strong {
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .proto-arrow { font-size: 13px; color: var(--text-muted); margin-left: auto; }
+
+    /* Strategy cards */
+    .strat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+
+    .strat-header {
+      padding: 1rem 1.25rem;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      user-select: none;
+      transition: background 0.15s;
+    }
+
+    .strat-header:hover { background: var(--bg-surface); }
+
+    .strat-left { display: flex; align-items: flex-start; gap: 12px; }
+
+    .strat-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+
+    .strat-title {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 3px;
+    }
+
+    .strat-tagline {
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--text-secondary);
+    }
+
+    .strat-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .chevron {
+      font-size: 16px;
+      color: var(--text-muted);
+      transition: transform 0.2s;
+    }
+
+    .chevron.open { transform: rotate(180deg); }
+
+    .strat-body {
+      display: none;
+      border-top: 1px solid var(--border-light);
+      padding: 1.125rem 1.25rem;
+    }
+
+    .strat-body.open { display: block; }
+
+    /* Touch items */
+    .touches-label {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      margin-bottom: 0.625rem;
+    }
+
+    .touch-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1rem;
+      margin-bottom: 8px;
+    }
+
+    .touch-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 5px;
+    }
+
+    .touch-stage {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      letter-spacing: 0.07em;
+    }
+
+    .touch-desc {
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .touch-tbd {
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--text-muted);
+      font-style: italic;
+      margin-top: 4px;
+    }
+
+    /* Framework grid */
+    .strat-section-label {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      margin: 1.125rem 0 0.625rem;
+    }
+
+    .fw-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .fw-card {
+      background: var(--bg-surface);
+      border-radius: var(--radius-md);
+      padding: 0.625rem 0.75rem;
+    }
+
+    .fw-num {
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--navy-500);
+      line-height: 1;
+      margin-bottom: 4px;
+      letter-spacing: -0.5px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .fw-num { color: var(--navy-100); }
+    }
+
+    .fw-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .fw-desc {
+      font-size: 11px;
+      font-weight: 300;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="page-header">
+      <div class="eyebrow">BABY AGENT — Q3 STRATEGY</div>
+      <h1 class="page-title">Chat growth</h1>
+      <p class="page-sub">Getting more users into chat — and turning one-time chatters into regulars.</p>
+    </div>
+
+    <div class="toggle-row">
+      <button class="toggle-btn active" onclick="setView('funnel', this)">By funnel stage</button>
+      <button class="toggle-btn" onclick="setView('strategy', this)">By strategy</button>
+      <a class="toggle-btn" href="okrs.html">Q3 OKRs</a>
+      <a class="toggle-btn" href="roadmap.html">Q3 Roadmap</a>
+    </div>
+
+    <!-- ── FUNNEL VIEW ───────────────────────────────────── -->
+    <div class="view active" id="view-funnel">
+
+      <div class="gap-callout">
+        <i class="ti ti-alert-triangle gap-icon" aria-hidden="true"></i>
+        <div class="gap-text">
+          <strong>The gap we're closing:</strong> 25% of parents tap into chat in their first 30 days — but only 5% send a message. Addressing this drop is the primary Q3 focus.
+        </div>
+      </div>
+
+      <p class="hint">Click a stage to see metrics, goals, and how we get there</p>
+
+      <svg class="funnel" viewBox="0 0 600 240" xmlns="http://www.w3.org/2000/svg">
+        <g class="funnel-stage" onclick="openPanel('discover')" role="button" tabindex="0" aria-label="All Hatch users stage">
+          <polygon points="10,10 590,10 490,82 110,82" fill="#BFCAD9"/>
+          <text x="300" y="47" text-anchor="middle" font-size="14" font-weight="500" fill="#193A63" font-family="'TT Commons Pro', system-ui, sans-serif">All Hatch users</text>
+          <text x="300" y="65" text-anchor="middle" font-size="12" font-weight="400" fill="#274D7B" font-family="'TT Commons Pro', system-ui, sans-serif">25% tap into chat (first 30D)</text>
+        </g>
+        <g class="funnel-stage" onclick="openPanel('first')" role="button" tabindex="0" aria-label="First chat stage">
+          <polygon points="110,92 490,92 410,174 190,174" fill="#2E5484"/>
+          <text x="300" y="134" text-anchor="middle" font-size="14" font-weight="500" fill="#FAF8F4" font-family="'TT Commons Pro', system-ui, sans-serif">First chat sent</text>
+          <text x="300" y="158" text-anchor="middle" font-size="12" font-weight="400" fill="#BFCAD9" font-family="'TT Commons Pro', system-ui, sans-serif">5% send a message (first 30D)</text>
+          <text x="500" y="120" text-anchor="start" font-size="11" font-weight="700" fill="#2E5484" font-family="'TT Commons Pro', system-ui, sans-serif" letter-spacing="0.06em">← Q3 FOCUS</text>
+          <text x="500" y="136" text-anchor="start" font-size="11" font-weight="400" fill="#2E5484" font-family="'TT Commons Pro', system-ui, sans-serif">Grow to 10% by end of Q3</text>
+        </g>
+        <g class="funnel-stage" onclick="openPanel('repeat')" role="button" tabindex="0" aria-label="Repeat chatter stage">
+          <polygon points="190,184 410,184 355,248 245,248" fill="#13294B"/>
+          <text x="300" y="214" text-anchor="middle" font-size="14" font-weight="500" fill="#FAF8F4" font-family="'TT Commons Pro', system-ui, sans-serif">Repeat chatter</text>
+          <text x="300" y="232" text-anchor="middle" font-size="12" font-weight="400" fill="#BFCAD9" font-family="'TT Commons Pro', system-ui, sans-serif">25% return (30D)</text>
+        </g>
+      </svg>
+
+<p style="text-align: center; margin-bottom: 1.5rem; font-size: 0.875rem; color: var(--text-muted); display: flex; justify-content: center; gap: 1.5rem;">
+        <a href="https://app.hex.tech/hatch/app/Baby-Agent-Reporting-032klz1ZY26LJDhr7Ecb5t/latest" target="_blank" rel="noopener" style="color: var(--navy-500); text-decoration: underline; text-underline-offset: 3px;">Reporting dashboard →</a>
+        <a href="https://baa.hatch.co/conversations" target="_blank" rel="noopener" style="color: var(--navy-500); text-decoration: underline; text-underline-offset: 3px;">Baby Agent admin →</a>
+      </p>
+
+      <!-- Panel: All users -->
+      <div class="detail-panel" id="panel-discover">
+        <div class="panel-header">
+          <span class="panel-title">All Hatch users → starting a chat</span>
+          <button class="panel-close" onclick="closePanel('discover')" aria-label="Close">
+            <i class="ti ti-x"></i>
+          </button>
+        </div>
+        <div class="panel-body">
+          <div class="metrics-row">
+            <div class="m-card">
+              <div class="m-label">TODAY</div>
+              <div class="m-val">25%</div>
+              <div class="m-desc">tap into chat (first 30D)</div>
+            </div>
+            <div class="m-card">
+              <div class="m-label">THE GAP</div>
+              <div class="m-val">5%</div>
+              <div class="m-desc">send a message (first 30D)</div>
+            </div>
+            <div class="m-card">
+              <div class="m-label">Q3 FOCUS</div>
+              <div class="m-val goal">10%</div>
+              <div class="m-desc">send a message (first 30D)</div>
+            </div>
+          </div>
+          <div class="section-label">HOW WE GET THERE</div>
+          <div class="lever">
+            <div class="lever-title">Proactive first message</div>
+            <div class="lever-desc">If we send users a message first, they skip the "start a chat" step entirely — they just reply. This sidesteps the conversion problem rather than solving it directly.</div>
+          </div>
+          <div class="lever">
+            <div class="lever-title">Proactive content surfacing</div>
+            <div class="lever-desc">Surface relevant content to users before they have to ask — meeting them at the right moment with the right resource.</div>
+          </div>
+          <div class="lever">
+            <div class="lever-title">Proactive natural language flow</div>
+            <div class="lever-desc">Trigger NL command flows proactively based on what we know about the user — turning a passive touchpoint into an action the user can take immediately.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel: First chat -->
+      <div class="detail-panel" id="panel-first">
+        <div class="panel-header">
+          <span class="panel-title">First chat → great experience</span>
+          <button class="panel-close" onclick="closePanel('first')" aria-label="Close">
+            <i class="ti ti-x"></i>
+          </button>
+        </div>
+        <div class="panel-body">
+          <div class="metrics-row">
+            <div class="m-card">
+              <div class="m-label">TODAY</div>
+              <div class="m-val">5%</div>
+              <div class="m-desc">send a message (first 30D)</div>
+            </div>
+            <div class="m-card">
+              <div class="m-label">Q3 GOAL</div>
+              <div class="m-val goal">10%</div>
+              <div class="m-desc">of all users send a chat</div>
+            </div>
+          </div>
+          <div class="section-label">HOW WE GET THERE</div>
+          <div class="lever">
+            <div class="lever-title">Content cards in chat</div>
+            <div class="lever-desc">Content cards surface relevant content inside first conversations — meeting users at the right moment with the right resource.</div>
+            <a class="proto-slot" href="content-cards.html">
+              <i class="ti ti-layout-cards proto-icon" aria-hidden="true"></i>
+              <span class="proto-text"><strong>Content cards</strong> — strategy &amp; early signals</span>
+              <i class="ti ti-arrow-right proto-arrow" aria-hidden="true"></i>
+            </a>
+          </div>
+          <div class="lever">
+            <div class="lever-title">Natural language commands</div>
+            <div class="lever-desc">When a user arrives with product intent — "change my Rest+ to rain sounds," "set bedtime to 7pm" — we do it for them in chat. No instructions, no bouncing to another part of the app.</div>
+            <a class="proto-slot" href="nl-commands.html">
+              <i class="ti ti-terminal proto-icon" aria-hidden="true"></i>
+              <span class="proto-text"><strong>Natural language commands</strong> — strategy &amp; use cases</span>
+              <i class="ti ti-arrow-right proto-arrow" aria-hidden="true"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel: Repeat -->
+      <div class="detail-panel" id="panel-repeat">
+        <div class="panel-header">
+          <span class="panel-title">First chat → repeat chatter</span>
+          <button class="panel-close" onclick="closePanel('repeat')" aria-label="Close">
+            <i class="ti ti-x"></i>
+          </button>
+        </div>
+        <div class="panel-body">
+          <div class="metrics-row">
+            <div class="m-card">
+              <div class="m-label">TODAY</div>
+              <div class="m-val">25%</div>
+              <div class="m-desc">return within 30D of first message</div>
+            </div>
+            <div class="m-card">
+              <div class="m-label">Q3 GOAL</div>
+              <div class="m-val goal">40%</div>
+              <div class="m-desc">holdover from Q2 — hard to move, less Q3 focus</div>
+            </div>
+          </div>
+          <div class="progress-bar-wrap">
+            <div class="progress-label"><span>25% today</span><span>40% goal</span></div>
+            <div class="progress-track">
+              <div class="progress-fill" style="width: 75%;"></div>
+            </div>
+          </div>
+          <div class="section-label">HOW WE GET THERE</div>
+          <div class="lever">
+            <div class="lever-title">Quality of first chat drives return</div>
+            <div class="lever-desc">Repeat chatting is the downstream outcome of a great first experience. NL commands and content cards are the primary levers — users come back when chat proved useful the first time.</div>
+            <div class="lever-tags">
+              <span class="ltag navy">outcome of first chat quality</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── STRATEGY VIEW ──────────────────────────────────── -->
+    <div class="view" id="view-strategy">
+      <p class="hint">Click a strategy to see how it moves the funnel</p>
+
+      <!-- Proactive messaging -->
+      <div class="strat-card">
+        <div class="strat-header" onclick="window.location.href='proactive-messaging.html'">
+          <div class="strat-left">
+            <i class="ti ti-send strat-icon" style="color: var(--navy-500);" aria-hidden="true"></i>
+            <div>
+              <div class="strat-title">Proactive messaging</div>
+              <div class="strat-tagline">Reach users before they reach us</div>
+            </div>
+          </div>
+          <div class="strat-right">
+            <svg width="20" height="40" viewBox="0 0 20 40" aria-label="Touches top two funnel stages">
+              <polygon points="0,0 20,0 17,13 3,13" fill="#BFCAD9"/>
+              <polygon points="3,15 17,15 14,28 6,28" fill="#2E5484"/>
+              <polygon points="6,30 14,30 12,40 8,40" fill="#D3D1C7" opacity="0.4"/>
+            </svg>
+            <i class="ti ti-chevron-down chevron" id="sc-proactive" aria-hidden="true"></i>
+          </div>
+        </div>
+        <div class="strat-body" id="sb-proactive">
+          <div class="touches-label">FUNNEL STAGES IT TOUCHES</div>
+          <div class="touch-item">
+            <div class="touch-dot" style="background: #BFCAD9;"></div>
+            <div>
+              <div class="touch-stage">ALL HATCH USERS → FIRST CHAT</div>
+              <div class="touch-desc">A proactive first message bypasses the 25%→5% drop entirely. Users who've never chatted just reply — no empty state, no friction.</div>
+            </div>
+          </div>
+          <div class="touch-item">
+            <div class="touch-dot" style="background: #2E5484;"></div>
+            <div>
+              <div class="touch-stage">FIRST CHAT → REPEAT CHATTER</div>
+              <div class="touch-desc">For users who've already sent a chat, a proactive follow-up re-engages them at the right moment.</div>
+              <div class="touch-tbd">Follow-up format to be defined in Q3</div>
+            </div>
+          </div>
+          <div class="strat-section-label">FOUNDATIONAL WORK</div>
+          <div class="fw-grid">
+            <div class="fw-card">
+              <div class="fw-num">01</div>
+              <div class="fw-label">Trigger eligibility</div>
+              <div class="fw-desc">Don't inundate users with overlapping triggers</div>
+            </div>
+            <div class="fw-card">
+              <div class="fw-num">02</div>
+              <div class="fw-label">Priority logic</div>
+              <div class="fw-desc">When multiple triggers fire, which one wins?</div>
+            </div>
+            <div class="fw-card">
+              <div class="fw-num">03</div>
+              <div class="fw-label">Cadence rules</div>
+              <div class="fw-desc">How often is okay to proactively message?</div>
+            </div>
+            <div class="fw-card">
+              <div class="fw-num">04</div>
+              <div class="fw-label">Response-adaptive logic</div>
+              <div class="fw-desc">Does a reply change what comes next?</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content cards -->
+      <div class="strat-card">
+        <div class="strat-header" onclick="window.location.href='content-cards.html'">
+          <div class="strat-left">
+            <i class="ti ti-layout-cards strat-icon" style="color: var(--amber);" aria-hidden="true"></i>
+            <div>
+              <div class="strat-title">Content cards</div>
+              <div class="strat-tagline">Surface the right content at the right moment</div>
+            </div>
+          </div>
+          <div class="strat-right">
+            <svg width="20" height="40" viewBox="0 0 20 40" aria-label="Touches top two funnel stages">
+              <polygon points="0,0 20,0 17,13 3,13" fill="#BFCAD9"/>
+              <polygon points="3,15 17,15 14,28 6,28" fill="#2E5484"/>
+              <polygon points="6,30 14,30 12,40 8,40" fill="#D3D1C7" opacity="0.4"/>
+            </svg>
+            <i class="ti ti-arrow-right chevron" id="sc-content" aria-hidden="true"></i>
+          </div>
+        </div>
+        <div class="strat-body" id="sb-content">
+          <div class="touches-label">FUNNEL STAGES IT TOUCHES</div>
+          <div class="touch-item">
+            <div class="touch-dot" style="background: #BFCAD9;"></div>
+            <div>
+              <div class="touch-stage">ALL HATCH USERS → FIRST CHAT</div>
+              <div class="touch-desc">A content card is the leading format for proactive first messages — concrete, relevant, easy to reply to.</div>
+            </div>
+          </div>
+          <div class="touch-item">
+            <div class="touch-dot" style="background: #2E5484;"></div>
+            <div>
+              <div class="touch-stage">FIRST CHAT → QUALITY EXPERIENCE</div>
+              <div class="touch-desc">Content cards also surface inside conversations, helping users discover guides and articles they'd never have found on their own.</div>
+              <div class="signal-box" style="margin-top: 8px;">
+                <p><strong>Early signal:</strong> 57% return rate for content-first openers vs. 25% baseline (n=49). New Q3 focus area.</p>
+              </div>
+            </div>
+          </div>
+          <a class="proto-slot" href="#" onclick="return false;" style="margin-top: 0.875rem;">
+            <i class="ti ti-layout-cards proto-icon" aria-hidden="true"></i>
+            <span class="proto-text"><strong>Content card prototype</strong> — ready to embed</span>
+            <i class="ti ti-arrow-right proto-arrow" aria-hidden="true"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- NL commands -->
+      <div class="strat-card">
+        <div class="strat-header" onclick="window.location.href='nl-commands.html'">
+          <div class="strat-left">
+            <i class="ti ti-terminal strat-icon" style="color: var(--navy-500);" aria-hidden="true"></i>
+            <div>
+              <div class="strat-title">Natural language commands</div>
+              <div class="strat-tagline">Chat becomes the action layer, not just Q&amp;A</div>
+            </div>
+          </div>
+          <div class="strat-right">
+            <svg width="20" height="40" viewBox="0 0 20 40" aria-label="Touches bottom two funnel stages">
+              <polygon points="0,0 20,0 17,13 3,13" fill="#D3D1C7" opacity="0.4"/>
+              <polygon points="3,15 17,15 14,28 6,28" fill="#2E5484"/>
+              <polygon points="6,30 14,30 12,40 8,40" fill="#13294B"/>
+            </svg>
+            <i class="ti ti-chevron-down chevron" id="sc-nlc" aria-hidden="true"></i>
+          </div>
+        </div>
+        <div class="strat-body" id="sb-nlc">
+          <div class="touches-label">FUNNEL STAGES IT TOUCHES</div>
+          <div class="touch-item">
+            <div class="touch-dot" style="background: #2E5484;"></div>
+            <div>
+              <div class="touch-stage">FIRST CHAT → QUALITY EXPERIENCE</div>
+              <div class="touch-desc">When a user arrives with product intent — "change my Rest+ to rain sounds," "set bedtime to 7pm" — we do it for them in chat. No instructions, no app navigation required.</div>
+            </div>
+          </div>
+          <div class="touch-item">
+            <div class="touch-dot" style="background: #13294B;"></div>
+            <div>
+              <div class="touch-stage">FIRST CHAT → REPEAT CHATTER</div>
+              <div class="touch-desc">Users who experience chat as an action layer have a reason to come back the next time they want something done. This is the primary mechanism for building the repeat habit.</div>
+            </div>
+          </div>
+          <a class="proto-slot" href="#" onclick="return false;" style="margin-top: 0.875rem;">
+            <i class="ti ti-terminal proto-icon" aria-hidden="true"></i>
+            <span class="proto-text"><strong>NL commands prototype</strong> — ready to embed</span>
+            <i class="ti ti-arrow-right proto-arrow" aria-hidden="true"></i>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function setView(id, btn) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('view-' + id).classList.add('active');
+      btn.classList.add('active');
+      document.querySelectorAll('.detail-panel').forEach(p => p.classList.remove('open'));
+    }
+
+    function openPanel(id) {
+      const target = document.getElementById('panel-' + id);
+      const isOpen = target.classList.contains('open');
+      document.querySelectorAll('.detail-panel').forEach(p => p.classList.remove('open'));
+      if (!isOpen) target.classList.add('open');
+    }
+
+    function closePanel(id) {
+      document.getElementById('panel-' + id).classList.remove('open');
+    }
+
+    function toggleStrat(id) {
+      const body = document.getElementById('sb-' + id);
+      const chev = document.getElementById('sc-' + id);
+      const isOpen = body.classList.contains('open');
+      body.classList.toggle('open', !isOpen);
+      chev.classList.toggle('open', !isOpen);
+    }
+
+    if (new URLSearchParams(window.location.search).get('view') === 'strategy') {
+      const stratBtn = document.querySelectorAll('.toggle-btn')[1];
+      setView('strategy', stratBtn);
+    }
+
+    document.querySelectorAll('.funnel-stage').forEach(el => {
+      el.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') el.click();
+      });
+    });
+  </script>
+</body>
+</html>

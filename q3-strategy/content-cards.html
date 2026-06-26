@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Content Cards — Baby Agent Q3</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+  <style>
+    :root {
+      --warm-white:  #FAF8F4;
+      --neutral-100: #F4F1E9;
+      --morning:     #F1EBE1;
+      --magic-hour:  #CFBAA7;
+      --dusk:        #BA9D90;
+      --navy-100:    #BFCAD9;
+      --navy-500:    #2E5484;
+      --navy-600:    #274D7B;
+      --navy-700:    #1F4370;
+      --navy-800:    #193A63;
+      --navy-900:    #13294B;
+      --navy-1000:   #0A1A34;
+      --amber:       #FF972F;
+      --white:       #FFFFFF;
+
+      --bg-page:    var(--warm-white);
+      --bg-card:    var(--white);
+      --bg-surface: var(--neutral-100);
+
+      --text-primary:   var(--navy-1000);
+      --text-secondary: var(--navy-800);
+      --text-muted:     var(--navy-600);
+
+      --border-light:  var(--morning);
+      --border-mid:    var(--magic-hour);
+
+      --radius-md:  10px;
+      --radius-lg:  16px;
+      --radius-pill: 999px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-page:    var(--navy-1000);
+        --bg-card:    var(--navy-900);
+        --bg-surface: var(--navy-800);
+
+        --text-primary:   var(--white);
+        --text-secondary: var(--navy-100);
+        --text-muted:     #7A90A8;
+
+        --border-light: var(--navy-700);
+        --border-mid:   var(--navy-600);
+      }
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'TT Commons Pro', 'TT Commons', system-ui, -apple-system, sans-serif;
+      background: var(--bg-page);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 2.5rem 3rem 5rem;
+      line-height: 1.4;
+    }
+
+    .page { max-width: 1100px; margin: 0 auto; }
+
+    .page-header {
+      max-width: 680px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--navy-900);
+      text-decoration: none;
+      margin-bottom: 2rem;
+      padding: 8px 16px 8px 12px;
+      border: 1px solid var(--border-mid);
+      border-radius: var(--radius-pill);
+      background: var(--bg-card);
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .back-link:hover {
+      background: var(--neutral-100);
+      border-color: var(--border-strong);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .back-link { color: var(--white); }
+    }
+    .top-nav { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
+    .nav-pill { font-size: 13px; font-weight: 400; padding: 7px 16px; border-radius: 999px; border: 1px solid var(--border-light); background: transparent; color: var(--text-muted); text-decoration: none; transition: all 0.15s; }
+    .nav-pill:hover { border-color: var(--border-strong); }
+    .nav-pill.active { background: var(--navy-800); color: var(--white); border-color: var(--navy-800); font-weight: 500; }
+
+    .page-header { margin-bottom: 2.5rem; }
+
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+
+    .page-title {
+      font-size: 28px;
+      font-weight: 400;
+      color: var(--text-primary);
+      line-height: 1.075;
+      letter-spacing: -0.5px;
+      margin-bottom: 10px;
+    }
+
+    .page-sub {
+      font-size: 17px;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .section {
+      margin-bottom: 3rem;
+    }
+
+    .section-eyebrow {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-eyebrow::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-light);
+    }
+
+    .section-title {
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--text-primary);
+      letter-spacing: -0.3px;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-desc {
+      font-size: 16px;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 1.25rem;
+    }
+
+    /* Carousel */
+    .carousel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .carousel-viewport {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .carousel-arrow {
+      background: var(--navy-900);
+      border: none;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #fff;
+      font-size: 20px;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+
+    .carousel-arrow:hover { background: var(--navy-700); }
+    .carousel-arrow:disabled { opacity: 0.25; cursor: default; }
+
+    .carousel-img-wrap {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+    }
+
+    .carousel-img-wrap img {
+      width: 240px;
+      border-radius: 34px;
+      display: block;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+
+    .carousel-dots {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .carousel-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border-mid);
+      transition: background 0.2s, transform 0.2s;
+      cursor: pointer;
+    }
+
+    .carousel-dot.active {
+      background: var(--navy-500);
+      transform: scale(1.3);
+    }
+
+    .carousel-caption {
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* Signal cards */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.125rem;
+    }
+
+    .stat-val {
+      font-size: 30px;
+      font-weight: 400;
+      color: var(--navy-500);
+      line-height: 1;
+      letter-spacing: -0.75px;
+      margin-bottom: 5px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .stat-val { color: var(--navy-100); }
+    }
+
+    .stat-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .stat-desc {
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .subsection-title {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin: 1.5rem 0 0.625rem;
+    }
+
+    /* Comparison table */
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+      margin-bottom: 1rem;
+    }
+
+    .comp-table th {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      text-align: left;
+      padding: 0 0.75rem 0.5rem;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .comp-table th:not(:first-child) { text-align: right; }
+
+    .comp-table td {
+      padding: 0.625rem 0.75rem;
+      border-bottom: 1px solid var(--border-light);
+      color: var(--text-secondary);
+      font-weight: 300;
+    }
+
+    .comp-table td:not(:first-child) { text-align: right; }
+
+    .comp-table tr:last-child td { border-bottom: none; }
+
+    .comp-table .got-card { color: var(--navy-500); font-weight: 500; }
+    @media (prefers-color-scheme: dark) {
+      .comp-table .got-card { color: var(--navy-100); }
+    }
+
+    .lift-pill {
+      display: inline-block;
+      background: #E8F4EC;
+      color: #1A5C2A;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 2px 7px;
+      border-radius: var(--radius-pill);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .lift-pill { background: #0D2E14; color: #5AC878; }
+    }
+
+    .signal-note {
+      background: var(--morning);
+      border: 1px solid var(--magic-hour);
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1rem;
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 0.75rem;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .signal-note { background: var(--navy-800); border-color: var(--navy-600); }
+    }
+
+    .signal-note strong { font-weight: 500; color: var(--text-primary); }
+
+    .loop-stat-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .loop-stat {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.125rem;
+    }
+
+    .loop-stat-val {
+      font-size: 26px;
+      font-weight: 400;
+      color: var(--navy-500);
+      line-height: 1;
+      letter-spacing: -0.5px;
+      margin-bottom: 5px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .loop-stat-val { color: var(--navy-100); }
+    }
+
+    .loop-stat-label {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .prose {
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 1rem;
+    }
+
+    .bottom-line {
+      background: var(--navy-900);
+      color: var(--white);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.25rem;
+      font-size: 16px;
+      font-weight: 300;
+      line-height: 1.6;
+      margin-bottom: 0.75rem;
+    }
+
+    .watch-box {
+      background: #FFF8EE;
+      border: 1px solid #FFD4A0;
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1rem;
+      font-size: 15px;
+      font-weight: 300;
+      color: #5A3800;
+      line-height: 1.6;
+      margin-bottom: 0.75rem;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .watch-box { background: #2A1800; border-color: #5A3000; color: #FBBF6A; }
+    }
+
+    .watch-box strong { font-weight: 500; }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    .two-col-left { min-width: 0; }
+    .two-col-right { min-width: 0; }
+
+    /* Finding blocks */
+    .finding-block {
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 10px;
+    }
+
+    .finding-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1.125rem;
+    }
+
+    .finding-num {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--white);
+      background: var(--navy-900);
+      border-radius: var(--radius-pill);
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+      letter-spacing: 0;
+    }
+
+    .finding-title {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.3;
+      margin-bottom: 5px;
+    }
+
+    .finding-sub {
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .finding-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .finding-stat {
+      background: var(--bg-surface);
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1rem;
+    }
+
+    .finding-stat-val {
+      font-size: 28px;
+      font-weight: 400;
+      color: var(--navy-500);
+      line-height: 1;
+      letter-spacing: -0.5px;
+      margin-bottom: 5px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .finding-stat-val { color: var(--navy-100); }
+    }
+
+    .finding-stat-label {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Next ideas */
+    .idea-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .idea {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 0.875rem 1.125rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .idea-icon {
+      font-size: 20px;
+      color: var(--text-muted);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .idea-title {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 3px;
+    }
+
+    .idea-desc {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .tbd-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      background: var(--morning);
+      color: var(--text-muted);
+      border: 1px solid var(--border-mid);
+      margin-top: 5px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .tbd-badge {
+        background: var(--navy-800);
+        border-color: var(--navy-600);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <nav class="top-nav">
+      <a class="nav-pill" href="index.html">By funnel stage</a>
+      <a class="nav-pill active" href="index.html?view=strategy">By strategy</a>
+      <a class="nav-pill" href="okrs.html">Q3 OKRs</a>
+      <a class="nav-pill" href="roadmap.html">Q3 Roadmap</a>
+    </nav>
+    <a class="back-link" href="index.html?view=strategy">
+      <i class="ti ti-arrow-left"></i> Back to strategy
+    </a>
+
+    <div class="page-header">
+      <div class="eyebrow">STRATEGY — CONTENT CARDS</div>
+      <h1 class="page-title">Surfacing the right content at the right moment</h1>
+      <p class="page-sub">Content cards embed sounds, lights, and stories from the Hatch content library directly in the chat experience — giving users a reason to engage with content they'd never have found on their own.</p>
+    </div>
+
+    <!-- WHAT'S LIVE -->
+    <div class="section">
+      <div class="section-eyebrow">WHAT'S ALREADY LIVE</div>
+      <div class="two-col">
+        <div class="two-col-left">
+          <h2 class="section-title">In-chat content cards</h2>
+          <p class="section-desc">When Baby Agent answers a question about a Hatch product or feature, it surfaces a content card inline — giving the user a visual, actionable next step rather than a wall of text. Users can preview sounds and colors directly from the chat response, and save them to their favorites.</p>
+        </div>
+        <div class="two-col-right">
+          <div class="carousel">
+            <div class="carousel-viewport">
+              <button class="carousel-arrow" id="prev" onclick="moveCarousel(-1)" aria-label="Previous">
+                <i class="ti ti-chevron-left"></i>
+              </button>
+              <div class="carousel-img-wrap">
+                <img id="carousel-img" src=".PNG" alt="" />
+              </div>
+              <button class="carousel-arrow" id="next" onclick="moveCarousel(1)" aria-label="Next">
+                <i class="ti ti-chevron-right"></i>
+              </button>
+            </div>
+            <div class="carousel-dots" id="carousel-dots"></div>
+            <div class="carousel-caption" id="carousel-caption"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EARLY SIGNALS -->
+    <div class="section">
+      <div class="section-eyebrow">EARLY SIGNALS</div>
+      <h2 class="section-title">Cards are driving content engagement</h2>
+      <p class="section-desc">Week of Jun 17–23: 95 new users received their first card recommendation. Cumulative: 148 recipients, 3.1% of all-time Baby Agent users. We're less than 2 weeks into content launch — and the numbers are holding up.</p>
+
+      <div class="finding-block">
+        <div class="finding-header">
+          <div class="finding-num">01</div>
+          <div>
+            <div class="finding-title">The cards themselves convert — well above industry norms</div>
+            <div class="finding-sub">35% of card impressions led to a preview of that exact content within 7 days, mostly same-day. Industry benchmark for recommendation surfaces: 5–15%.</div>
+          </div>
+        </div>
+        <div class="finding-stats">
+          <div class="finding-stat">
+            <div class="finding-stat-val">35%</div>
+            <div class="finding-stat-label">card → preview rate</div>
+          </div>
+          <div class="finding-stat">
+            <div class="finding-stat-val">5–15%</div>
+            <div class="finding-stat-label">industry benchmark</div>
+          </div>
+          <div class="finding-stat">
+            <div class="finding-stat-val">97%</div>
+            <div class="finding-stat-label">of impressions were net-new content for the user</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="finding-block">
+        <div class="finding-header">
+          <div class="finding-num">02</div>
+          <div>
+            <div class="finding-title">Getting a card measurably changes what users do next</div>
+            <div class="finding-sub">Compared to users who chatted but got no card (53-user cohort, full 7-day windows).</div>
+          </div>
+        </div>
+        <table class="comp-table" style="margin-top: 0.75rem;">
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Got card</th>
+              <th>No card</th>
+              <th>Lift</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Previewed content in 7 days</td>
+              <td class="got-card">67.9%</td>
+              <td>40.6%</td>
+              <td><span class="lift-pill">+27pt</span></td>
+            </tr>
+            <tr>
+              <td>Saved a routine in 7 days</td>
+              <td class="got-card">81.1%</td>
+              <td>70.5%</td>
+              <td><span class="lift-pill">+11pt</span></td>
+            </tr>
+            <tr>
+              <td>Any content action in 7 days</td>
+              <td class="got-card">88.7%</td>
+              <td>74.2%</td>
+              <td><span class="lift-pill">+15pt</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="signal-note" style="margin-top: 0.875rem;">
+          <strong>Within-user pre/post:</strong> Preview rate rose from 22.6% in the 7 days before a card to 67.9% after — 26 users became new previewers post-card vs. 2 who previewed only pre. Each user is their own control here.
+        </div>
+      </div>
+
+      <div class="finding-block">
+        <div class="finding-header">
+          <div class="finding-num">03</div>
+          <div>
+            <div class="finding-title">1 in 5 recipients completed the full loop — card to routine — inside a week</div>
+            <div class="finding-sub">This is the hypothesis we set out to test: that a recommendation in chat can move someone all the way to using new content on their device.</div>
+          </div>
+        </div>
+        <div class="finding-stats">
+          <div class="finding-stat">
+            <div class="finding-stat-val">31%</div>
+            <div class="finding-stat-label">saved card-recommended content</div>
+          </div>
+          <div class="finding-stat">
+            <div class="finding-stat-val">63%</div>
+            <div class="finding-stat-label">of those savers played it on their device</div>
+          </div>
+          <div class="finding-stat">
+            <div class="finding-stat-val">~20%</div>
+            <div class="finding-stat-label">completed the full card → save → play sequence</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- WHERE NEXT -->
+    <div class="section">
+      <div class="section-eyebrow">WHERE WE MIGHT TAKE IT NEXT · IN PARTNERSHIP WITH MARY</div>
+      <h2 class="section-title">Open directions for Q3</h2>
+      <p class="section-desc">The content card surface is early. These are the directions worth exploring as we scale it.</p>
+      <div class="idea-list">
+        <div class="idea">
+          <i class="ti ti-send idea-icon" aria-hidden="true"></i>
+          <div>
+            <div class="idea-title">Proactive first message with a content card</div>
+            <div class="idea-desc">Send a content card as the first message to users who haven't chatted yet — pulling them into chat while surfacing content they'd find valuable.</div>
+          </div>
+        </div>
+        <div class="idea">
+          <i class="ti ti-star idea-icon" aria-hidden="true"></i>
+          <div>
+            <div class="idea-title">Drive users to premium content</div>
+            <div class="idea-desc">Surface subscription content — like Lulu — through a card. The user tries it, loves it, and hits the paywall naturally when they want to keep going. Chat becomes a discovery channel for subscription conversion.</div>
+          </div>
+        </div>
+        <div class="idea">
+          <i class="ti ti-arrows-shuffle idea-icon" aria-hidden="true"></i>
+          <div>
+            <div class="idea-title">Expand across content types</div>
+            <div class="idea-desc">If a user has a sleep sound saved, can we get them into music? A story? A light? Use what we know about their existing preferences to introduce them to content categories they haven't tried yet.</div>
+          </div>
+        </div>
+        <div class="idea">
+          <i class="ti ti-binoculars idea-icon" aria-hidden="true"></i>
+          <div>
+            <div class="idea-title">Learn what users do next</div>
+            <div class="idea-desc">After a card — do users come back to chat and ask for different content? Ask us to schedule it? Go play it right away? Understanding that sequence should drive what we build next: more recommendations, scheduling flows, or something else entirely.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <script>
+    const slides = [
+      { src: 'earthrise.png',    caption: 'Earthrise — color recommendation' },
+      { src: 'hatch-navy.png',   caption: 'Hatch Navy — sound recommendation' },
+      { src: 'womb-sounds.png',  caption: 'Womb Sounds — sound recommendation' },
+    ];
+
+    let current = 0;
+
+    const img     = document.getElementById('carousel-img');
+    const dots    = document.getElementById('carousel-dots');
+    const caption = document.getElementById('carousel-caption');
+    const prev    = document.getElementById('prev');
+    const next    = document.getElementById('next');
+
+    function buildDots() {
+      dots.innerHTML = '';
+      slides.forEach((_, i) => {
+        const d = document.createElement('div');
+        d.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+        d.onclick = () => goTo(i);
+        dots.appendChild(d);
+      });
+    }
+
+    function goTo(index) {
+      current = index;
+      img.style.opacity = '0';
+      setTimeout(() => {
+        img.src = slides[current].src;
+        img.alt = slides[current].caption;
+        img.style.opacity = '1';
+      }, 150);
+      caption.textContent = slides[current].caption;
+      dots.querySelectorAll('.carousel-dot').forEach((d, i) => d.classList.toggle('active', i === current));
+      prev.disabled = current === 0;
+      next.disabled = current === slides.length - 1;
+    }
+
+    function moveCarousel(dir) { goTo(current + dir); }
+
+    img.style.transition = 'opacity 0.15s ease';
+    buildDots();
+    goTo(0);
+  </script>
+</body>
+</html>
