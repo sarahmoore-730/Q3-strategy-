@@ -664,14 +664,14 @@
     </div>
 
     <div class="toggle-row">
-      <button class="toggle-btn active" onclick="setView('funnel', this)">By funnel stage</button>
-      <button class="toggle-btn" onclick="setView('strategy', this)">By strategy</button>
+      <button class="toggle-btn active" onclick="setView('strategy', this)">By strategy</button>
+      <button class="toggle-btn" onclick="setView('funnel', this)">By funnel stage</button>
       <a class="toggle-btn" href="okrs.html">Q3 OKRs</a>
       <a class="toggle-btn" href="roadmap.html">Q3 Roadmap</a>
     </div>
 
     <!-- ── FUNNEL VIEW ───────────────────────────────────── -->
-    <div class="view active" id="view-funnel">
+    <div class="view" id="view-funnel">
 
       <div class="gap-callout">
         <i class="ti ti-alert-triangle gap-icon" aria-hidden="true"></i>
@@ -701,11 +701,6 @@
           <text x="300" y="232" text-anchor="middle" font-size="12" font-weight="400" fill="#BFCAD9" font-family="'TT Commons Pro', system-ui, sans-serif">25% return (30D)</text>
         </g>
       </svg>
-
-<p style="text-align: center; margin-bottom: 1.5rem; font-size: 0.875rem; color: var(--text-muted); display: flex; justify-content: center; gap: 1.5rem;">
-        <a href="https://app.hex.tech/hatch/app/Baby-Agent-Reporting-032klz1ZY26LJDhr7Ecb5t/latest" target="_blank" rel="noopener" style="color: var(--navy-500); text-decoration: underline; text-underline-offset: 3px;">Reporting dashboard →</a>
-        <a href="https://baa.hatch.co/conversations" target="_blank" rel="noopener" style="color: var(--navy-500); text-decoration: underline; text-underline-offset: 3px;">Baby Agent admin →</a>
-      </p>
 
       <!-- Panel: All users -->
       <div class="detail-panel" id="panel-discover">
@@ -832,12 +827,12 @@
     </div>
 
     <!-- ── STRATEGY VIEW ──────────────────────────────────── -->
-    <div class="view" id="view-strategy">
+    <div class="view active" id="view-strategy">
       <p class="hint">Click a strategy to see how it moves the funnel</p>
 
       <!-- Proactive messaging -->
       <div class="strat-card">
-        <div class="strat-header" onclick="window.location.href='proactive-messaging.html'">
+        <div class="strat-header" onclick="window.location.href='proactive-messaging-prd.html'">
           <div class="strat-left">
             <i class="ti ti-send strat-icon" style="color: var(--navy-500);" aria-hidden="true"></i>
             <div>
@@ -986,6 +981,23 @@
         </div>
       </div>
 
+      <!-- This week -->
+      <div style="margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--border-light);">
+        <div class="section-label">THIS WEEK</div>
+        <a href="https://linear.app/hatchbaby/team/SLE/cycle/15" target="_blank" rel="noopener" style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: 1.125rem 1.375rem; background: var(--bg-card); text-decoration: none; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--border-strong)'" onmouseout="this.style.borderColor='var(--border-light)'">
+          <div>
+            <div style="font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.25rem;">Cycle 15 · Jul 6–13</div>
+            <div style="font-size: 0.875rem; color: var(--text-muted);">What the team is building and fixing this week — open the current cycle in Linear.</div>
+          </div>
+          <i class="ti ti-arrow-right" style="font-size: 20px; color: var(--navy-500); flex-shrink: 0;" aria-hidden="true"></i>
+        </a>
+      </div>
+
+      <div style="display: flex; gap: 0.75rem; margin-top: 1.25rem; flex-wrap: wrap;">
+        <a href="https://app.hex.tech/hatch/app/Baby-Agent-Reporting-032klz1ZY26LJDhr7Ecb5t/latest" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.875rem; font-weight: 600; color: var(--text-primary); text-decoration: none; border: 1px solid var(--border-mid); border-radius: 999px; padding: 0.5rem 1.125rem; background: var(--bg-card); transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--border-strong)'" onmouseout="this.style.borderColor='var(--border-mid)'">Reporting dashboard →</a>
+        <a href="https://baa.hatch.co/conversations" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.875rem; font-weight: 600; color: var(--text-primary); text-decoration: none; border: 1px solid var(--border-mid); border-radius: 999px; padding: 0.5rem 1.125rem; background: var(--bg-card); transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--border-strong)'" onmouseout="this.style.borderColor='var(--border-mid)'">Baby Agent admin →</a>
+      </div>
+
     </div>
   </div>
 
@@ -1017,9 +1029,12 @@
       chev.classList.toggle('open', !isOpen);
     }
 
-    if (new URLSearchParams(window.location.search).get('view') === 'strategy') {
-      const stratBtn = document.querySelectorAll('.toggle-btn')[1];
-      setView('strategy', stratBtn);
+    const _view = new URLSearchParams(window.location.search).get('view');
+    const _btns = document.querySelectorAll('.toggle-btn');
+    if (_view === 'funnel') {
+      setView('funnel', _btns[1]);
+    } else if (_view === 'strategy') {
+      setView('strategy', _btns[0]);
     }
 
     document.querySelectorAll('.funnel-stage').forEach(el => {

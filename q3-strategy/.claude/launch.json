@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "q3-strategy",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "3456"],
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["server.js"],
       "port": 3456
     }
   ]
